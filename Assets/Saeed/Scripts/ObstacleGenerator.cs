@@ -4,51 +4,52 @@ using UnityEngine;
 
 public class ObstacleGenerator : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> objectList;
-    [SerializeField] private List<Transform> spawnPoints;
+    [SerializeField] private List<GameObject> obstacless;
+
     [SerializeField] private int maxObjects = 5;
-    [SerializeField] private float spawnRadius = 1f;
+    [SerializeField] private float spawnHeight = 1f;
+    [SerializeField] private float space = 1f;
+
+    private List<GameObject> obstacles = new List<GameObject>();
 
     private void Start()
     {
-        SpawnObjects();
+        SpawnObstacles();
     }
 
-    private void SpawnObjects()
+    private void SpawnObstacles()
     {
-        int objectsToSpawn = Mathf.Min(maxObjects, objectList.Count, spawnPoints.Count);
-
-        for (int i = 0; i < objectsToSpawn; i++)
+        for (int i = 0; i < maxObjects; i++)
         {
-            GameObject objectPrefab = objectList[Random.Range(0, objectList.Count)];
-            Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
-            Vector3 spawnPos = GetRandomSpawnPosition(spawnPoint.position);
 
-            GameObject newObject = Instantiate(objectPrefab, spawnPos, Quaternion.identity);
+            GameObject obstaclePrefab = obstacless[Random.Range(0, obstacless.Count)];
+            Vector3 spawnPos = GetRandomSpawnPosition();
+            GameObject newObstacle = Instantiate(obstaclePrefab, spawnPos, Quaternion.identity);
+
+            obstacles.Add(newObstacle);
         }
     }
 
-    private Vector3 GetRandomSpawnPosition(Vector3 center)
+    private Vector3 GetRandomSpawnPosition()
     {
         Vector3 spawnPos = Vector3.zero;
-        bool emptyPlace = false;
-        int maxAttempts = 4; // Maximum number of attempts to find an empty spawn position
-        int attemptCount = 0;
 
-        while (!emptyPlace && attemptCount < maxAttempts)
+        bool Emptyplace = false;
+        while (!Emptyplace)
         {
-            // Generate a random position within a sphere with a radius of spawnRadius around the center
-            spawnPos = center + Random.insideUnitSphere * spawnRadius;
 
-            // Check if there are any colliders within a sphere around the spawn position with a radius of spawnRadius
-            Collider[] colliders = Physics.OverlapSphere(spawnPos, spawnRadius);
-            emptyPlace = colliders.Length == 0;
-
-            // Increment the attempt count
-            attemptCount++;
+            spawnPos = new Vector3(Random.Range(transform.position.x - transform.localScale.x / 2f, transform.position.x + transform.localScale.x / 2f), spawnHeight, Random.Range(transform.position.z - transform.localScale.z / 2f, transform.position.z + transform.localScale.z / 2f));
+            Emptyplace = true;
+            foreach (GameObject obstacle in obstacles)
+            {
+                if (Vector3.Distance(spawnPos, obstacle.transform.position) < space)
+                {
+                    Emptyplace = false;
+                    break;
+                }
+            }
         }
 
-        // Return the spawn position
         return spawnPos;
     }
 }
