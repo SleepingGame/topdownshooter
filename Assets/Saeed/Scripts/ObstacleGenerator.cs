@@ -9,6 +9,9 @@ public class ObstacleGenerator : MonoBehaviour
     [SerializeField] private int maxObjects = 5;
     [SerializeField] private float spawnHeight = 1f;
     [SerializeField] private float space = 1f;
+    [SerializeField] private float objscale = 2f;
+
+
 
     private List<GameObject> obstacles = new List<GameObject>();
 
@@ -38,7 +41,7 @@ public class ObstacleGenerator : MonoBehaviour
         while (!Emptyplace)
         {
 
-            spawnPos = new Vector3(Random.Range(transform.position.x - transform.localScale.x / 2f, transform.position.x + transform.localScale.x / 2f), spawnHeight, Random.Range(transform.position.z - transform.localScale.z / 2f, transform.position.z + transform.localScale.z / 2f));
+            spawnPos = new Vector3(Random.Range(transform.position.x - transform.localScale.x / objscale, transform.position.x + transform.localScale.x / objscale), spawnHeight, Random.Range(transform.position.z - transform.localScale.z / objscale, transform.position.z + transform.localScale.z / objscale));
             Emptyplace = true;
             foreach (GameObject obstacle in obstacles)
             {
