@@ -2,49 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerCon : MonoBehaviour
 {
-    public float moveSpeed = 5.0f;
-    public GameObject bulletPrefab;
-    public Transform bulletSpawnPoint;
+    [SerializeField] private float moveSpeed = 5f;
+    private Vector3 movementInput;
 
     private Rigidbody rb;
-    private Vector3 movement;
 
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true; 
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.z = Input.GetAxisRaw("Vertical");
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-        {
-            Vector3 direction = hit.point - transform.position;
-            direction.y = 0;
-            transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Shoot();
-        }
+        Move();
     }
 
-    void FixedUpdate()
+    private void Move()
     {
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        Vector3 movement = movementInput.normalized * moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(transform.position + movement);
     }
 
-    void Shoot()
+    public void SetMovementInput(Vector2 input)
     {
-        GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-        bullet.GetComponent<Rigidbody>().velocity = transform.forward * 10.0f;
+        movementInput = new Vector3(input.x, 0f, input.y);
     }
 }
