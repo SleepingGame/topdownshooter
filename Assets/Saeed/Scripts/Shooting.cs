@@ -5,13 +5,21 @@ using UnityEngine;
 public class Shooting : MonoBehaviour
 {
     public GameObject bulletPrefab;
+    public float bulletDestroyTime = 2f;
     public Transform gunPosition;
     public float bulletSpeed = 10f;
-    public float destroybullet = 2f;
+    public float bulletDamage = 20f;
+
+    private PlayerHealth playerHealth;
+
+    public void Start()
+    {
+        playerHealth = GetComponent<PlayerHealth>();
+    }
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire1")) 
+        if (Input.GetButtonDown("Fire1"))
         {
             Shoot();
         }
@@ -25,23 +33,22 @@ public class Shooting : MonoBehaviour
         if (Physics.Raycast(ray, out hit))
         {
             Vector3 shootDirection = hit.point - gunPosition.position;
-            shootDirection.y = 0f; 
+            shootDirection.y = 0f;
             shootDirection.Normalize();
 
             GameObject bullet = Instantiate(bulletPrefab, gunPosition.position, Quaternion.identity);
             bullet.GetComponent<Rigidbody>().velocity = shootDirection * bulletSpeed;
 
-           
-            StartCoroutine(DestroyBulletAfterDelay(bullet, destroybullet));
+            Destroy(bullet, bulletDestroyTime);
         }
     }
 
-    IEnumerator DestroyBulletAfterDelay(GameObject bullet, float delay)
+    private void OnCollisionEnter(Collision collision)
     {
-        yield return new WaitForSeconds(destroybullet);
-        if (bullet != null)
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            Destroy(bullet);
+            playerHealth.TakeDamage(bulletDamage);
+            Debug.Log("player health :" + playerHealth.currentHealth);
         }
     }
 }

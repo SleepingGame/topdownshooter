@@ -2,59 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ObstacleGenerator : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> obstacless;
+    public List<Transform> spawnPositions = new List<Transform>();
+    public List<GameObject> objectsToSpawn = new List<GameObject>();
+    public int numObjectsToSpawn = 10;
 
-    [SerializeField] private int maxObjects = 5;
-    [SerializeField] private float spawnHeight = 1f;
-    [SerializeField] private float space = 1f;
-    [SerializeField] private float objscale = 2f;
-
-    [SerializeField] private LayerMask wallLayerMask; 
-
-    private List<GameObject> obstacles = new List<GameObject>();
-
-    private void Start()
+    void Start()
     {
-        SpawnObstacles();
-    }
+        List<Transform> availableSpawnPositions = new List<Transform>(spawnPositions);
 
-    private void SpawnObstacles()
-    {
-        for (int i = 0; i < maxObjects; i++)
+        for (int i = 0; i < numObjectsToSpawn; i++)
         {
-            GameObject obstaclePrefab = obstacless[Random.Range(0, obstacless.Count)];
-            Vector3 spawnPos = GetRandomSpawnPosition();
-            GameObject newObstacle = Instantiate(obstaclePrefab, spawnPos, Quaternion.identity);
+            int randomIndex = Random.Range(0, availableSpawnPositions.Count);
+            Transform spawnPosition = availableSpawnPositions[randomIndex];
 
-            obstacles.Add(newObstacle);
+            availableSpawnPositions.RemoveAt(randomIndex);
+
+            int randomObjectIndex = Random.Range(0, objectsToSpawn.Count);
+            GameObject objectToSpawn = objectsToSpawn[randomObjectIndex];
+            Instantiate(objectToSpawn, spawnPosition.position, spawnPosition.rotation);
         }
-    }
-
-    private Vector3 GetRandomSpawnPosition()
-    {
-        Vector3 spawnPos = Vector3.zero;
-
-        bool Emptyplace = false;
-        while (!Emptyplace)
-        {
-            // start using debugs, maybe the raycast is false
-            spawnPos = new Vector3(Random.Range(transform.position.x - transform.localScale.x / objscale, transform.position.x + transform.localScale.x / objscale), spawnHeight, Random.Range(transform.position.z - transform.localScale.z / objscale, transform.position.z + transform.localScale.z / objscale));
-            RaycastHit hit;
-            if (Physics.Raycast(spawnPos, Vector3.down, out hit, 100f, wallLayerMask))
-            {
-                Emptyplace = true;
-                foreach (GameObject obstacle in obstacles)
-                {
-                    if (Vector3.Distance(spawnPos, obstacle.transform.position) < space)
-                    {
-                        Emptyplace = false;
-                        break;
-                    }
-                }
-            }
-        }
-        return spawnPos;
     }
 }
