@@ -5,6 +5,7 @@ using UnityEngine;
 public class PowerUpManager : MonoBehaviour
 {
     public GameObject[] powerUpPrefabs;
+    public GameObject[] spawnPoints;
     public float spawnInterval = 10f;
     public float powerUpDuration = 5f;
 
@@ -21,11 +22,11 @@ public class PowerUpManager : MonoBehaviour
 
     void SpawnPowerUp()
     {
-
         int randomIndex = Random.Range(0, powerUpPrefabs.Length);
         GameObject powerUpPrefab = powerUpPrefabs[randomIndex];
 
-        Vector3 spawnPosition = new Vector3(Random.Range(-10f, 10f), 0.5f, Random.Range(-10f, 10f));
+        int randomSpawnIndex = Random.Range(0, spawnPoints.Length);
+        Vector3 spawnPosition = spawnPoints[randomSpawnIndex].transform.position;
 
         GameObject powerUp = Instantiate(powerUpPrefab, spawnPosition, Quaternion.identity);
         PowerUp powerUpComponent = powerUp.GetComponent<PowerUp>();
