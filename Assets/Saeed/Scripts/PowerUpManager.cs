@@ -18,7 +18,10 @@ public class PowerUpManager : MonoBehaviour
             SpawnPowerUp();
             nextSpawnTime = Time.time + spawnInterval;
         }
+        
     }
+
+    // check next spawn time 
 
     void SpawnPowerUp()
     {

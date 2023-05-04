@@ -23,6 +23,12 @@ public class PowerUp : MonoBehaviour
     {
         float originalSpeed = player.moveSpeed;
         player.moveSpeed *= speedBoost;
+        
+        if(player.moveSpeed > 10f)
+        {
+            player.moveSpeed = 5f;
+        }
+
         shooting.bulletDamage *= bulletMultiplier;
 
         yield return new WaitForSeconds(duration);

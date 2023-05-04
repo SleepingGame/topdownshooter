@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,14 @@ public class PlayerCon : MonoBehaviour
     {
         Vector3 movement = movementInput.normalized * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(transform.position + movement);
+    }
+
+    internal void DoPowerup()
+    {
+
+        // do the poweer up
+
+        throw new NotImplementedException();
     }
 
     public void SetMovementInput(Vector2 input)
